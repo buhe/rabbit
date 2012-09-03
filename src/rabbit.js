@@ -1,15 +1,18 @@
 window.rabbit = {}
 
-window.rabbit.Thread = function(runnable){
+window.rabbit.Thread = function(runnable,callback){
     this.runnable = runnable;
+    this.callback = callback;
 }
 
 window.rabbit.Thread.prototype = {
     start: function(){
+        var self = this;
         var worker = new Worker("../src/worker.js");
         worker.postMessage(this.runnable)
         worker.onmessage = function(result){
-            alert(result.data)
+            var data = result.data;
+            self.callback(data)
         }
     }
 }
@@ -22,25 +25,25 @@ window.rabbit.SimpleThreadPool = function(core ,max){
 
 window.rabbit.SimpleThreadPool.prototype ={
 
-    execute: function(runnable){
+    execute: function(runnable,callback){
         if(this.workCount < this.core){
-            this.addWorker(runnable);
-        }else if(this.addQueue(runnable)){
+            return this.addWorker(runnable,callback);
+        }else if(this.addQueue(runnable,callback)){
         }else{
-            this.reject(runnable);
+            this.reject(runnable,callback);
         }
     },
 
-    addWorker: function(runnable){
-        var thread = new rabbit.Thread(runnable)
+    addWorker: function(runnable,callback){
+        var thread = new rabbit.Thread(runnable,callback)
         thread.start()
     },
 
-    addQueue: function(runnable){
+    addQueue: function(runnable,callback){
 
     },
 
-    reject: function(runnable){
+    reject: function(runnable,callback){
         runnable.run();
     }
 }
