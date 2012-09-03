@@ -7,13 +7,7 @@ window.rabbit.Thread = function(runnable){
 window.rabbit.Thread.prototype = {
     start: function(){
         var worker = new Worker("../src/worker.js");
-        var command = {
-            run : function(){
-                return 10086
-            },
-            text : '110'
-        }
-        worker.postMessage(command)
+        worker.postMessage(this.runnable)
         worker.onmessage = function(result){
             alert(result.data)
         }

@@ -5,12 +5,9 @@
     <script type="text/javascript" src="../src/rabbit.js"></script>
     <script type="text/javascript">
         window.onload = function(){
-            alert('onload');
             var pool = new rabbit.SimpleThreadPool(10,20);
             pool.execute({
-                run: function(){
-                    return 100;
-                }
+                run: '1 + 2'
             });
         }
     </script>
